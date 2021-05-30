@@ -1,16 +1,16 @@
-/****************************************
+/***************************************
 氏名：JIANG JIWEI
 学籍番号：21M30519
 説明：
-MPI＋OpenMP＋CacheBlockingの並列化を実現したいですけど、うまく行けませんでした。
-MPIのprocess数が１の時がうまく走れますけど,
-その以上のprocessが走るっと、計算errorが出ます。
-*****************************************/
+MPI＋OpenMP＋CacheBlocking+SIMDの並列化を実現しました。
+***************************************/
+#include <omp.h>
 #include <mpi.h>
 #include <cstdio>
 #include <cmath>
 #include <vector>
 #include <chrono>
+#include <immintrin.h>
 using namespace std;
 
 void matmult(vector<float> &A, vector<float> &B, vector<float> &C, int N, int size, int offset) {
@@ -46,8 +46,12 @@ void matmult(vector<float> &A, vector<float> &B, vector<float> &C, int N, int si
           for (int ir=0; ir<mc; ir+=mr) {
             for (int kr=0; kr<kc; kr++) {
               for (int i=ir; i<ir+mr; i++) {
-                for (int j=jr; j<jr+nr; j++) { 
-                  Cc[i*nc+j] += Ac[i*kc+kr] * Bc[kr*nc+j];
+          __m256 Avec = _mm256_broadcast_ss(Ac+i*kc+kr);
+                for (int j=jr; j<jr+nr; j+=8) {
+                  __m256 Bvec = _mm256_load_ps(Bc+kr*nc+j);
+                  __m256 Cvec = _mm256_load_ps(Cc+i*nc+j);
+                  Cvec = _mm256_fmadd_ps(Avec, Bvec, Cvec);
+                  _mm256_store_ps(Cc+i*nc+j, Cvec);
                 }
               }
             }
@@ -55,7 +59,7 @@ void matmult(vector<float> &A, vector<float> &B, vector<float> &C, int N, int si
         }
         for (int i=0; i<mc; i++) {
           for (int j=0; j<nc; j++) {
-            C[(i+ic)*n+(j+jc)+offset] += Cc[i*nc+j];//C[i+ic][j+jc]
+            C[(i+ic)*N+(j+jc)+offset] += Cc[i*nc+j];//C[i+ic][j+jc]
           }
         }
       }
@@ -70,7 +74,7 @@ int main(int argc, char** argv) {
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  const int N = 1024;
+  const int N = 2048;
   vector<float> A(N*N);
   vector<float> B(N*N);
   vector<float> C(N*N, 0);
