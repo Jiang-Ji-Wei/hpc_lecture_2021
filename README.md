@@ -1,3 +1,5 @@
+学籍番号：21M30519
+氏名：JIANG JIWEI
 # hpc_lecture
 
 |          | Topic                                | Sample code               |
