@@ -3,7 +3,7 @@
 学籍番号：21M30519
 説明：
 example.cppは書き換えません。他のfileに書いています。
-MPI+OpenMPが上手くやりましたが、他の並列方法のコードには多少の問題があります。
+MPI+OpenMP+CacheBlocking+SIMDが上手くやりましたが、MPI+CUDAにはまだ問題があります。
 *****************************************/
 #include <mpi.h>
 #include <cstdio>
