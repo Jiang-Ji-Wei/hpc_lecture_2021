@@ -1,9 +1,14 @@
 /***************************************
-氏名：JIANG JIWEI
-学籍番号：21M30519
-説明：
+氏名:JIANG JIWEI
+学籍番号:21M30519
+説明:
 MPI＋OpenMP＋CacheBlocking+SIMDの並列化を実現しました。
 MPI+CUDAを実現したいですが、まだ問題があります。
+
+Run code on Tubame:
+module load intel-mpi gcc
+mpicxx example.cpp -fopenmp -march=native -O3
+mpirun -np 4 ./a.out
 ***************************************/
 #include <omp.h>
 #include <mpi.h>
