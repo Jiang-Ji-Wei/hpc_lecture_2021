@@ -1,9 +1,14 @@
 /****************************************
-氏名：JIANG JIWEI
-学籍番号：21M30519
-説明：
+氏名:IANG JIWEI
+学籍番号:21M30519
+説明:
 MPI＋CUDAの並列化を実現したいですけど、うまく行けませんでした。
 Flopsが出ませんでした。
+
+Runcode on Tusbame:
+module load cuda gcc/8.3.0 openmpi
+nvcc MPI_CUDA.cu -lmpi -Xcompiler "-O3 -fopenmp"
+mpirun -np 4 ./a.out
 *****************************************/
 
 #include <mpi.h>
