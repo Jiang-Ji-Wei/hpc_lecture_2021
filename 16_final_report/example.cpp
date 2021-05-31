@@ -5,7 +5,7 @@
 MPI＋OpenMP＋CacheBlocking+SIMDの並列化を実現しました。
 MPI+CUDAを実現したいですが、まだ問題があります。
 
-Run code on Tubame:
+Run code on Tusbame:
 module load intel-mpi gcc
 mpicxx example.cpp -fopenmp -march=native -O3
 mpirun -np 4 ./a.out
